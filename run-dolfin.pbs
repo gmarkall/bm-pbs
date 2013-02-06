@@ -1,0 +1,35 @@
+#PBS -N dolfinbench
+#PBS -l walltime=3:00:00
+#PBS -l select=1:ncpus=12:ngpus=4:mem=4gb
+#PBS -l excl=true
+#PBS -q pqkelly
+
+module load op2/devel-modules
+module load fenics/1.1
+
+# Base dir
+export BASE=/home/grm08/ics-v2
+# For benchmark script
+export PYOP2_DIR=$BASE/PyOP2
+export UFL_DIR=$BASE/ufl/trunk
+export FFC_DIR=$BASE/ffc/pyop2
+export FLUIDITY_DIR=$BASE/fluidity
+
+cd /home/grm08/ics-v2/benchmarks
+
+echo Running dolfin_seq
+export RESDIR=`python adv_diff_bench.py  --run --csv --dump --plot --versions dolfin --reference dolfin 2>&1  | awk '{if ($1=="Timestamp:") print $2}'`
+
+echo Copying backends results from $RESDIR
+chmod a+r $RESDIR -R
+chmod a+x $RESDIR
+scp -r $RESDIR grm08@shell4.doc.ic.ac.uk:/homes/grm08/public_html/ics/dolfin_seq
+
+echo Running dolfin_par
+export RESDIR=`python adv_diff_bench.py  --run --csv --dump --plot --versions dolfin --reference dolfin -n 12 2>&1  | awk '{if ($1=="Timestamp:") print $2}'`
+
+echo Copying backends results from $RESDIR
+chmod a+r $RESDIR -R
+chmod a+x $RESDIR
+scp -r $RESDIR grm08@shell4.doc.ic.ac.uk:/homes/grm08/public_html/ics/dolfin_par
+
