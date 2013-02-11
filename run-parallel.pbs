@@ -9,7 +9,7 @@ source /home/grm08/ics-v2/e.sh
 cd /home/grm08/ics-v2/benchmarks
 
 echo Running parallel
-export RESDIR=`python adv_diff_bench.py  --run --csv --dump --plot --versions fluidity_mpi fluidity_pyop2_cuda fluidity_pyop2_openmp --reference fluidity_mpi -n 12 2>&1  | awk '{if ($1=="Timestamp:") print $2}'`
+export RESDIR=`python adv_diff_bench.py  --run --csv --dump --plot --versions fluidity_mpi fluidity_pyop2_seq fluidity_pyop2_cuda fluidity_pyop2_openmp --reference fluidity_mpi -n 12 2>&1  | awk '{if ($1=="Timestamp:") print $2}'`
 
 echo Copying parallel results from $RESDIR
 chmod a+r $RESDIR -R
